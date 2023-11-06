@@ -140,10 +140,45 @@ const refreshToken = async (req, res = response) => {
   }
 }
 
+const onAuthStateChanged = async (req, res = response) => {
+  const uid = req.uid;
+  try {
+    let user = await User.findOne({where: { id: uid }});
+
+    if(!user) return res.status(400).json({
+      msg: 'Usuario no existe'
+    });
+
+    //* verificar si el usuario está activo *//
+    if(!user.state) return res.status(400).json({
+      msg: 'Usuario / Contraseña no son correctos - estado: false'
+    });
+    console.log('user: ', {user});
+    //* verificar la contraseña *//
+;
+
+    //* generar JWT *//
+    console.log('user con id: ', user.id);
+    const token = await generateJWT(user.id);
+
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      msg: `Hable con el administrador ${error.message}`
+    })
+  }
+}
+
 
 module.exports = {
   login,
   googleSignIn,
   register,
-  refreshToken
+  refreshToken,
+  onAuthStateChanged
 }

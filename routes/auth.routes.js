@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { login, googleSignIn, register, refreshToken } = require('../controllers/auth.controller');
+const { login, googleSignIn, register, refreshToken, onAuthStateChanged } = require('../controllers/auth.controller');
 const { validateInput } = require('../middlewares/validate-inputs');
 const { emailExist } = require('../helpers/db-validators');
 const { validateJWT } = require('../middlewares/validate-jwt');
@@ -30,5 +30,10 @@ router.post('/refresh', [
   validateJWT,
   validateInput
 ], refreshToken);
+
+router.post('/active', [
+  validateJWT,
+  validateInput
+], onAuthStateChanged);
 
 module.exports = router;
