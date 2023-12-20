@@ -1,6 +1,40 @@
 const { responde: response, request } = require('express');
 const bcryptjs = require('bcryptjs');
-const { User } = require('../database/dbConnection');
+const { User, Laptop, Pc } = require('../database/dbConnection');
+
+const getUserWithoutEquipment = async (req = request, res = response) => {
+  try {
+    const usersWithEquipment = await User.findAll({
+      where: {
+        status: 'user',
+      },
+      include: [
+        {
+          model: Laptop,
+          as: 'laptops',
+          required: false,
+        },
+        {
+          model: Pc,
+          as: 'pcs',
+          required: false,
+        },
+      ],
+      group: ['User.id', 'laptops.id', 'pcs.id'], // Agregar laptops.id y pcs.id al GROUP BY
+    });
+
+    // Filtrar usuarios que no tienen ni laptop ni pc asignado
+    const usersWithoutEquipment = usersWithEquipment.filter(user => {
+      return !user.laptops.length && !user.pcs.length;
+    });
+
+    console.log('Usuarios sin asignación de laptop ni pc:', usersWithoutEquipment);
+    res.json({ usersWithoutEquipment });
+  } catch (error) {
+    console.error('Error al buscar usuarios sin asignación de equipos:', error);
+    res.status(500).json({ error: 'Error al buscar usuarios sin asignación de equipos' });
+  }
+};
 
 
 const userGet = async (req = request, res = response) => {
@@ -133,5 +167,6 @@ module.exports = {
   userDelete,
   userPut,
   userPost,
-  userPatch
+  userPatch,
+  getUserWithoutEquipment
 }

@@ -54,14 +54,15 @@ const laptopPost = async (req, res) => {
     service_tag_equipo,
     activo_del_equipo
   } = req.body;
-  const userId = req.user.id;
+  const adminId = req.user.id;
   
   const laptop = await Laptop.create({
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,
     activo_del_equipo,
-    userId
+    adminId,
+  
   });
   await laptop.save()
 
@@ -69,6 +70,33 @@ const laptopPost = async (req, res) => {
     estadoPeticion: true,
     laptop
   });
+}
+
+const assignComputerEquipment = async (req, res = response) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const updatedLaptop = await Laptop.findOne({ where: { id } });
+    if (updatedLaptop) {
+      await updatedLaptop.update({ userId: userId,
+        status: 'asignado',
+      });
+      console.log('Laptop asignado con éxito');
+    } else {
+      console.log('Laptop no encontrado');
+    }
+  
+    res.json({
+      estadoPeticion: true,
+      laptop: updatedLaptop
+    });
+  } catch (error) {
+    res.json({
+      msg: `Hable con el administrador: ${error}`
+    })
+  }
+
 }
 
 const laptopDelete = async (req, res = response) => {
@@ -138,5 +166,6 @@ module.exports = {
   getLaptopById,
   laptopPost,
   laptopDelete,
+  assignComputerEquipment,
   laptopPut
 }

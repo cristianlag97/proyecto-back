@@ -1,12 +1,17 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { userGet, userPut, userPost, userPatch, userDelete } = require('../controllers/user.controller');
+const { userGet, userPut, userPost, userPatch, userDelete, getUserWithoutEquipment } = require('../controllers/user.controller');
 const { emailExist, existUserById } = require('../helpers/db-validators');
 const {validateInput, validateJWT} = require('../middlewares');
 
 const router = Router();
 
 router.get('/', userGet);
+
+router.get('/without-equipment', [
+  validateJWT,
+  validateInput
+], getUserWithoutEquipment);
 
 router.delete('/:id',[
   validateJWT,

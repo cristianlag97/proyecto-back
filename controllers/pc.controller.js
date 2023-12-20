@@ -32,7 +32,7 @@ const getPc = async (req, res = response) => {
 const getPcById = async (req, res) => { 
   const { id } = req.params;
 
-  const updatedLaptop = await Pc.findOne({
+  const updatedPcs = await Pc.findOne({
     where: { id }, include: [
     {
       model: User,
@@ -42,7 +42,7 @@ const getPcById = async (req, res) => {
 
   res.json({
     estadoPeticion: true,
-    pc: updatedLaptop
+    pc: updatedPcs
   });
 }
 
@@ -54,14 +54,14 @@ const pcPost = async (req, res) => {
     service_tag_equipo,
     activo_del_equipo
   } = req.body;
-  const userId = req.user.id;
+  const adminId = req.user.id;
   
   const pc = await Pc.create({
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,
     activo_del_equipo,
-    userId,
+    adminId,
   });
   await pc.save()
 
@@ -69,6 +69,33 @@ const pcPost = async (req, res) => {
     estadoPeticion: true,
     pc
   });
+}
+
+const assignComputerEquipment = async (req, res = response) => {
+  const { id } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const updatedPcs = await Pc.findOne({ where: { id } });
+    if (updatedPcs) {
+      await updatedPcs.update({ userId: userId,
+        status: 'asignado',
+      });
+      console.log('pc asignado con éxito');
+    } else {
+      console.log('pc no encontrado');
+    }
+  
+    res.json({
+      estadoPeticion: true,
+      pc: updatedPcs
+    });
+  } catch (error) {
+    res.json({
+      msg: `Hable con el administrador: ${error}`
+    })
+  }
+
 }
 
 const pcDelete = async (req, res = response) => {
@@ -141,5 +168,6 @@ module.exports = {
   getPcById,
   pcPost,
   pcDelete,
-  pcPut
+  pcPut,
+  assignComputerEquipment
 }

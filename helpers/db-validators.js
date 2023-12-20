@@ -1,5 +1,24 @@
-const { User, Task } = require("../database/dbConnection");
+const { User, Laptop, Pc } = require("../database/dbConnection");
 
+
+const isRoleValidate = async(req , res = response, next) => {
+  
+  if(!req.user) {
+    return res.status(500).json({
+      'msg': 'Se quiere validar el rol sin validar el token primero'
+    });
+  }
+
+  const { status, name } = req.user;
+  if(status !== 'admin') {
+    return res.status(401).json({
+      'msg': `El usuario ${name} no es administrador - no tiene estos permisos`
+    });
+  }
+
+  next();
+  
+}
 
 //* valida si el correo está registrado o no *//
 const emailExist = async (email = '') => {
@@ -14,15 +33,22 @@ const existUserById = async (id) => {
   if(!existUser) throw new Error(`El id ${id} no existe`);
 }
 
-//* valida si el task existe *//
-const existTaskById = async (id) => {
-  const existTask = await Task.findOne({where: {id}});
+//* valida si el laptop existe *//
+const existLaptopById = async (id) => {
+  const existTask = await Laptop.findOne({where: {id}});
   if(!existTask) throw new Error(`El id ${id} no existe`);
 }
 
+//* valida si el pc existe *//
+const existPcById = async (id) => {
+  const existTask = await Pc.findOne({where: {id}});
+  if(!existTask) throw new Error(`El id ${id} no existe`);
+}
 
 module.exports = {
+  isRoleValidate,
   emailExist,
   existUserById,
-  existTaskById
+  existLaptopById,
+  existPcById
 }
