@@ -27,6 +27,8 @@ router.get('/:id', [
 router.post('/', [
   validateJWT,
   isRoleValidate,
+  check('referencia', 'La referencia es obligatoria').not().isEmpty(),
+  check('modelo', 'El modelo es obligatorio').not().isEmpty(),
   check('activo_pantalla', 'El activo de la pantalla es obligatorio').not().isEmpty(),
   check('service_tag_pantalla', 'El service tag de pantalla es obligatorio').not().isEmpty(),
   check('service_tag_equipo', 'El service tag de equipo es obligatorio').not().isEmpty(),

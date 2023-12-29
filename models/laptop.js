@@ -19,6 +19,14 @@ module.exports = (sequelize) => {
           },
         },
       },
+      referencia: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      modelo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       activo_pantalla: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -44,11 +52,19 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: true
       },
-      userId: {
+      adminId: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: 'User',
+          model: 'Users',
+          key: 'id',
+        },
+      },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: 'Users',
           key: 'id',
         },
       },

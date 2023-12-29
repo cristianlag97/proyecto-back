@@ -49,14 +49,18 @@ const getLaptopById = async (req, res) => {
 const laptopPost = async (req, res) => {
 
   const {
+    referencia,
+    modelo,
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,
-    activo_del_equipo
+    activo_del_equipo,
   } = req.body;
   const adminId = req.user.id;
   
   const laptop = await Laptop.create({
+    referencia,
+    modelo,
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,

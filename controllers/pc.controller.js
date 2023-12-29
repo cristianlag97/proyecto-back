@@ -8,7 +8,6 @@ const getPc = async (req, res = response) => {
     Pc.findAll({
       offset: since,
       limit: limit,
-      where: { userId },
       include: [
         {
           model: User,
@@ -49,21 +48,25 @@ const getPcById = async (req, res) => {
 const pcPost = async (req, res) => {
 
   const {
+    referencia,
+    modelo,
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,
-    activo_del_equipo
+    activo_del_equipo,
   } = req.body;
   const adminId = req.user.id;
   
   const pc = await Pc.create({
+    referencia,
+    modelo,
     activo_pantalla,
     service_tag_pantalla,
     service_tag_equipo,
     activo_del_equipo,
     adminId,
   });
-  await pc.save()
+  await pc.save();
 
   res.json({
     estadoPeticion: true,
